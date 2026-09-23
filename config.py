@@ -14,6 +14,8 @@ def load_settings() -> Settings:
     load_dotenv()
 
     token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
+    if len(token) >= 2 and token[0] == token[-1] and token[0] in {"'", '"'}:
+        token = token[1:-1].strip()
     channel_id = os.getenv("WELCOME_CHANNEL_ID", "").strip()
 
     if not token:
