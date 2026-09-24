@@ -29,6 +29,17 @@ def sanitize_discord_bot_token(raw_value: str) -> str:
     if token.lower().startswith("bot "):
         raise RuntimeError("DISCORD_BOT_TOKEN must be the raw Discord bot token, not a 'Bot ' prefixed value")
 
+    placeholder_markers = (
+        "your-discord-bot-token-here",
+        "paste-your-discord-bot-token-here",
+        "replace-with-your-bot-token",
+        "example-token",
+        "placeholder",
+        "changeme",
+    )
+    if token.lower() in placeholder_markers or "token-here" in token.lower() or "placeholder" in token.lower():
+        raise RuntimeError("DISCORD_BOT_TOKEN appears to be a placeholder value")
+
     return token
 
 

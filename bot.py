@@ -72,6 +72,9 @@ if __name__ == "__main__":
         create_bot().run(settings.token, log_handler=None)
     except discord.LoginFailure:
         logger.critical(
-            "Discord authentication failed. Possible causes: wrong bot token, revoked/regenerated token, wrong credential type, malformed environment variable, or incorrect Railway secret."
+            "Discord authentication failed. The configured bot token was rejected by Discord. Check that Railway contains the current bot token for the correct application and that it is not a placeholder, revoked, or wrong credential type."
         )
+        raise
+    except RuntimeError as exc:
+        logger.critical("Startup validation failed before login: %s", exc)
         raise
