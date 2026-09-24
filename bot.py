@@ -3,7 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 
-from config import load_settings
+from config import load_settings, token_fingerprint
 from welcome import build_welcome_embed, member_snapshot
 
 
@@ -66,6 +66,7 @@ if __name__ == "__main__":
     logger.info("Token whitespace: %s", "NONE" if settings.token == settings.token.strip() else "TRIMMED")
     logger.info("Surrounding quotes: %s", "NONE" if not (len(settings.token) >= 2 and settings.token[0] == settings.token[-1] and settings.token[0] in {'\'', '"'}) else "REMOVED")
     logger.info('"Bot " prefix: %s', "NOT PRESENT" if not settings.token.lower().startswith("bot ") else "PRESENT")
+    logger.info("Token fingerprint: %s", token_fingerprint(settings.token))
 
     try:
         create_bot().run(settings.token, log_handler=None)

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import hashlib
 import os
 
 from dotenv import load_dotenv
@@ -8,6 +9,10 @@ from dotenv import load_dotenv
 class Settings:
     token: str
     welcome_channel_id: int
+
+
+def token_fingerprint(token: str) -> str:
+    return hashlib.sha256((token or "").encode("utf-8")).hexdigest()[:16]
 
 
 def sanitize_discord_bot_token(raw_value: str) -> str:
