@@ -10,16 +10,29 @@ class Settings:
     welcome_channel_id: int
 
 
+def sanitize_discord_bot_token(raw_value: str) -> str:
+    token = (raw_value or "").strip()
+    if not token:
+        raise RuntimeError("DISCORD_BOT_TOKEN is missing")
+
+    if len(token) >= 2 and token[0] == token[-1] and token[0] in {"'", '"'}:
+        token = token[1:-1].strip()
+
+    if not token:
+        raise RuntimeError("DISCORD_BOT_TOKEN is missing")
+
+    if token.lower().startswith("bot "):
+        raise RuntimeError("DISCORD_BOT_TOKEN must be the raw Discord bot token, not a 'Bot ' prefixed value")
+
+    return token
+
+
 def load_settings() -> Settings:
     load_dotenv()
 
-    token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
-    if len(token) >= 2 and token[0] == token[-1] and token[0] in {"'", '"'}:
-        token = token[1:-1].strip()
+    token = sanitize_discord_bot_token(os.getenv("DISCORD_BOT_TOKEN", ""))
     channel_id = os.getenv("WELCOME_CHANNEL_ID", "").strip()
 
-    if not token:
-        raise RuntimeError("DISCORD_BOT_TOKEN is required")
     if not channel_id:
         raise RuntimeError("WELCOME_CHANNEL_ID is required")
 

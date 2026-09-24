@@ -62,4 +62,15 @@ def create_bot() -> WelcomeBot:
 
 if __name__ == "__main__":
     settings = load_settings()
-    create_bot().run(settings.token, log_handler=None)
+    logger.info("Discord token variable: PRESENT")
+    logger.info("Token whitespace: %s", "NONE" if settings.token == settings.token.strip() else "TRIMMED")
+    logger.info("Surrounding quotes: %s", "NONE" if not (len(settings.token) >= 2 and settings.token[0] == settings.token[-1] and settings.token[0] in {'\'', '"'}) else "REMOVED")
+    logger.info('"Bot " prefix: %s', "NOT PRESENT" if not settings.token.lower().startswith("bot ") else "PRESENT")
+
+    try:
+        create_bot().run(settings.token, log_handler=None)
+    except discord.LoginFailure:
+        logger.critical(
+            "Discord authentication failed. Possible causes: wrong bot token, revoked/regenerated token, wrong credential type, malformed environment variable, or incorrect Railway secret."
+        )
+        raise
